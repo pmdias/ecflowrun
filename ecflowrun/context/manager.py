@@ -71,7 +71,10 @@ class EcflowContextManager(object):
         return self
 
     def __exit__(self, exc_type, exc_value, exc_tb):
-        pass
+        if exc_type:
+            self.__job_abort()
+        # Remove the exit handler
+        atexit._exithandlers.remove(self.__brute_exit)
 
     def __run_cmd(self, cmd):
         raw_cmd = 'ecflow_client --{}'.format(cmd)

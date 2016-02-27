@@ -1,0 +1,2 @@
+class EcflowrunError(Exception):
+    pass

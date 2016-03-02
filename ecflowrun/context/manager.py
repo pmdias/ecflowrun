@@ -69,6 +69,10 @@ class EcflowContextManager(object):
         os.environ.update(self.__env)
         self.__register_signals()
 
+        # Setup a basic logger
+        self.logger = logging.getLogger(kwargs.pop('LOGGER'))
+        self.logger.setLevel(logging.INFO)
+
     def __enter__(self):
         self.__job_init()
         return self

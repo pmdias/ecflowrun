@@ -5,7 +5,7 @@ import shutil
 import traceback
 
 
-class TemporaryDIrectory(object):
+class TemporaryDirectory(object):
     """
     This class rprovides a context where it is available a temporary
     directory that can be used as a working directory for a task or

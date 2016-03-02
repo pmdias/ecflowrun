@@ -2,9 +2,12 @@ import os
 import subprocess
 import shlex
 import signal
-import atexit
+import logging
 
 from ecflowrun.errors import EcflowrunError
+
+
+logging.basicConfig(format='[%(asctime)s] %(message)s')
 
 
 class EcflowContextManager(object):
@@ -73,8 +76,6 @@ class EcflowContextManager(object):
     def __exit__(self, exc_type, exc_value, exc_tb):
         if exc_type:
             self.__job_abort()
-        # Remove the exit handler
-        atexit._exithandlers.remove(self.__brute_exit)
 
     def __run_cmd(self, cmd):
         raw_cmd = 'ecflow_client --{}'.format(cmd)
@@ -121,7 +122,8 @@ class EcflowContextManager(object):
         for s in self._TRAPPED_SIGNALS:
             signal.signal(s, self.__signal_handler)
 
-    @atexit.register
-    def __brute_exit(self):
-        os.wait()
-        self.__job_abort()
+    def log(self, msg, lvl):
+        self.logger.log(lvl, msg)
+
+    def force_abort(self):
+        return self.__job_abort()

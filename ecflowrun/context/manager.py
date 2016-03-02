@@ -64,7 +64,7 @@ class EcflowContextManager(object):
 
         self.__env = {}
         for k, v in kwargs.iteritems():
-            setattr(self.__env, k, v)
+            self.__env[k] = v
         self.__env['ECF_RID'] = str(os.getpid())
         os.environ.update(self.__env)
         self.__register_signals()

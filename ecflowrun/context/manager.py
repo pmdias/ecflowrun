@@ -58,7 +58,7 @@ class EcflowContextManager(object):
         'ECF_TRYNO'
     ])
 
-    def __init__(self, env, **kwargs):
+    def __init__(self, **kwargs):
         if not self._MANDATORY_VARS.issubset(set([kwargs.keys()])):
             raise EcflowrunError
 

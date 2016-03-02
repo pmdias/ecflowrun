@@ -75,7 +75,11 @@ class EcflowContextManager(object):
 
     def __exit__(self, exc_type, exc_value, exc_tb):
         if exc_type:
+            print traceback.format_exception(exc_type, exc_value, exc_tb)
             self.__job_abort()
+            return False
+        self.__job_complete()
+        return True
 
     def __run_cmd(self, cmd):
         raw_cmd = 'ecflow_client --{}'.format(cmd)

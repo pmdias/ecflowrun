@@ -59,7 +59,7 @@ class EcflowContextManager(object):
     ])
 
     def __init__(self, **kwargs):
-        if not self._MANDATORY_VARS.issubset(set([kwargs.keys()])):
+        if not self._MANDATORY_VARS.issubset(set(kwargs.keys())):
             raise EcflowrunError
 
         self.__env = {}

@@ -1,4 +1,3 @@
 *.pyc
 ecflowrun.egg-info/
 docs/build/
-docs/Makefile

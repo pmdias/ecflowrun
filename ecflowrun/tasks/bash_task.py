@@ -28,7 +28,6 @@ class BashTask(object):
                     shlex.split('/bin/bash {}'.format(tmp_file_path)),
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
-                    env=self.__env
                 )
 
                 out, err = sp.communicate()

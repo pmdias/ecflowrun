@@ -143,3 +143,10 @@ class EcflowContextManager(object):
             raise EcflowrunError(
                 'Failed to raise event with return code {}'.format(retcode)
             )
+
+    def label(self, name, msg):
+        out, err, retcode = self.__run_cmd('label={0} "{1}"'.format(name, msg))
+        if retcode:
+            raise EcflowrunError(
+                'Failed to set label message with return code {}'.format(retcode)
+            )

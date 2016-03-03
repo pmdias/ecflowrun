@@ -135,3 +135,10 @@ class EcflowContextManager(object):
 
     def force_abort(self):
         return self.__job_abort()
+
+    def event(self, ev):
+        out, err, retcode = self.__run_cmd('event={}'.format(ev))
+        if retcode:
+            raise EcflowrunError(
+                'Failed to raise event with return code {}'.format(retcode)
+            )

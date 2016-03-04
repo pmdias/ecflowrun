@@ -124,7 +124,6 @@ class EcflowContextManager(object):
             )
 
     def __signal_handler(self, signum, stframe):
-        os.wait()
         self.__job_abort()
 
     def __register_signals(self):

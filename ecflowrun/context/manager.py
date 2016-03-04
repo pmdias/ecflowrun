@@ -150,3 +150,10 @@ class EcflowContextManager(object):
             raise EcflowrunError(
                 'Failed to set label message with return code {}'.format(retcode)
             )
+
+    def meter(self, name, val):
+        out, err, retcode = self.__run_cmd('meter={0} {1}'.format(name, val))
+        if retcode:
+            raise EcflowrunError(
+                'Failed to update meter value with return code {}'.format(retcode)
+            )

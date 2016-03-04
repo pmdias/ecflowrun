@@ -3,6 +3,8 @@ import glob
 import tempfile
 import shutil
 import traceback
+import smtplib
+from email.mime.text import MIMEText
 
 
 class TemporaryDirectory(object):
@@ -50,3 +52,24 @@ class TemporaryDirectory(object):
     @property
     def path(self):
         return self.tmp_dir
+
+
+class EmailNotifier(object):
+    def __init__(self, server, port, username, password):
+        self.__server = server
+        self.__port = port
+        self.__username = username
+        self.__password = password
+
+    def send_email(self, sender, dest, subject, msg):
+        s = smtplib.SMTP(self.__server, self.__port)
+        s.starttls()
+        s.login(self.__username, self.__password)
+
+        msg = MIMEText(msg)
+        msg['From'] = sender
+        msg['To'] = dest
+        msg['Subject'] = subject
+
+        s.sendmail(sender, dest, msg.as_string())
+        s.quit()

@@ -75,10 +75,20 @@ class EcflowContextManager(object):
         self.logger.setLevel(logging.INFO)
 
     def __enter__(self):
+        """
+        As we enter the managed context, we signal the Ecflow server
+        that the job as started.
+        """
         self.__job_init()
         return self
 
     def __exit__(self, exc_type, exc_value, exc_tb):
+        """
+        As we exit the managed context, we evaluate if there was any error
+        and proceed to signal the Ecflow server with a job abort if any
+        error was detected. Otherwise, we just signal that the job as
+        completed.
+        """
         if exc_type:
             print traceback.format_exception(exc_type, exc_value, exc_tb)
             self.__job_abort()
@@ -87,6 +97,11 @@ class EcflowContextManager(object):
         return True
 
     def __run_cmd(self, cmd):
+        """
+        Generic way of sending commands to the ecflow_client. Probably
+        best to investigate if this can be done using the ecflow.Client
+        instead of an indirect call through a child process.
+        """
         raw_cmd = 'ecflow_client --{}'.format(cmd)
         splitted = shlex.split(raw_cmd)
         process = subprocess.Popen(
@@ -99,6 +114,9 @@ class EcflowContextManager(object):
         return out, err, retcode
 
     def __job_init(self):
+        """
+        Signal the Ecflow server that the job as started.
+        """
         out, err, retcode = self.__run_cmd(
             'init={}'.format(self.__env['ECF_RID'])
         )
@@ -108,6 +126,9 @@ class EcflowContextManager(object):
             )
 
     def __job_complete(self):
+        """
+        Signal the Ecflow server that the job is complete.
+        """
         out, err, retcode = self.__run_cmd('complete')
         if retcode:
             raise EcflowrunError(
@@ -115,6 +136,9 @@ class EcflowContextManager(object):
             )
 
     def __job_abort(self):
+        """
+        Signal the Ecflow server that the job was aborted.
+        """
         out, err, retcode = self.__run_cmd(
             'abort={}'.format(self.__env['ECF_RID'])
         )
@@ -124,19 +148,36 @@ class EcflowContextManager(object):
             )
 
     def __signal_handler(self, signum, stframe):
+        """
+        Abort the job if the process is signalled with the
+        signal number being registered.
+        """
         self.__job_abort()
 
     def __register_signals(self):
+        """
+        Register the generic signal handler for all signals
+        that we can catch.
+        """
         for s in self._TRAPPED_SIGNALS:
             signal.signal(s, self.__signal_handler)
 
     def log(self, msg, lvl):
+        """
+        Log a message with the corresponding level.
+        """
         self.logger.log(lvl, msg)
 
     def force_abort(self):
+        """
+        Allows a job to abort itself.
+        """
         return self.__job_abort()
 
     def event(self, ev):
+        """
+        Use the ecflow client to launch an Ecflow event.
+        """
         out, err, retcode = self.__run_cmd('event={}'.format(ev))
         if retcode:
             raise EcflowrunError(
@@ -144,6 +185,10 @@ class EcflowContextManager(object):
             )
 
     def label(self, name, msg):
+        """
+        Update the message of an Ecflow node label, identified by its
+        name.
+        """
         out, err, retcode = self.__run_cmd('label={0} "{1}"'.format(name, msg))
         if retcode:
             raise EcflowrunError(
@@ -151,6 +196,9 @@ class EcflowContextManager(object):
             )
 
     def meter(self, name, val):
+        """
+        Update the value of an Ecflow meter, identifier by its name.
+        """
         out, err, retcode = self.__run_cmd('meter={0} {1}'.format(name, val))
         if retcode:
             raise EcflowrunError(
